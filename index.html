@@ -1,60 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodApp Login</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    // Firebase configuration with your specific details
-    const firebaseConfig = {
-      apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-      authDomain: "moodappx.firebaseapp.com",
-      projectId: "moodappx",
-      storageBucket: "moodappx.appspot.com",
-      messagingSenderId: "85651101078",
-      appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-      measurementId: "G-6C7E2L6BXH"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    function login() {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          document.getElementById('login-page').style.display = 'none';
-          document.getElementById('home-page').style.display = 'flex';
-        })
-        .catch((error) => console.error("Error during login:", error));
-    }
-
-    function logout() {
-      signOut(auth)
-        .then(() => {
-          document.getElementById('login-page').style.display = 'flex';
-          document.getElementById('home-page').style.display = 'none';
-        })
-        .catch((error) => console.error("Error during logout:", error));
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Mood Tracking App</title>
 </head>
 <body>
-  <!-- Login Page -->
-  <div id="login-page" class="page">
-    <button class="button" onclick="login()">LOGIN</button>
-  </div>
+    <div id="login-page" class="page">
+        <button class="login-button" onclick="login()">LOGIN</button>
+    </div>
+    <div id="home-page" class="page" style="display: none;">
+        <h1>Welcome! Moodapp coming soon!</h1>
+        <button class="logout-button" onclick="logout()">LOGOUT</button>
+    </div>
 
-  <!-- Home Page -->
-  <div id="home-page" class="page" style="display: none;">
-    <button class="button logout" onclick="logout()">LOGOUT</button>
-    <div class="welcome-message">Welcome! Moodapp coming soon!</div>
-  </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+            authDomain: "moodappx.firebaseapp.com",
+            projectId: "moodappx",
+            storageBucket: "moodappx.appspot.com",
+            messagingSenderId: "85651101078",
+            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+            measurementId: "G-6C7E2L6BXH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        function login() {
+            console.log("Login button clicked");
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    console.log("Login successful", result);
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('home-page').style.display = 'flex';
+                })
+                .catch((error) => console.error("Error during login:", error));
+        }
+
+        function logout() {
+            signOut(auth).then(() => {
+                console.log("Logout successful");
+                document.getElementById('home-page').style.display = 'none';
+                document.getElementById('login-page').style.display = 'flex';
+            }).catch((error) => console.error("Error during logout:", error));
+        }
+    </script>
 </body>
 </html>
