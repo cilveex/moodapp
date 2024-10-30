@@ -34,7 +34,8 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        function login() {
+        // Define the login function
+        window.login = function() {
             console.log("Login button clicked");
             signInWithPopup(auth, provider)
                 .then((result) => {
@@ -43,15 +44,16 @@
                     document.getElementById('home-page').style.display = 'flex';
                 })
                 .catch((error) => console.error("Error during login:", error));
-        }
+        };
 
-        function logout() {
+        // Define the logout function
+        window.logout = function() {
             signOut(auth).then(() => {
                 console.log("Logout successful");
                 document.getElementById('home-page').style.display = 'none';
                 document.getElementById('login-page').style.display = 'flex';
             }).catch((error) => console.error("Error during logout:", error));
-        }
+        };
     </script>
 </body>
 </html>
