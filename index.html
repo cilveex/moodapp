@@ -3,51 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Login Example</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+    <title>Moodappx</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        function login() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).then((result) => {
-                window.location.href = "home.html"; // Redirect to home page
-            }).catch((error) => {
-                console.error("Error during login: ", error);
-            });
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+            authDomain: "moodappx.firebaseapp.com",
+            projectId: "moodappx",
+            storageBucket: "moodappx.appspot.com",
+            messagingSenderId: "85651101078",
+            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+            measurementId: "G-6C7E2L6BXH"
+        };
+        
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        async function login() {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('logout-section').style.display = 'block';
+            } catch (error) {
+                console.error("Login failed:", error);
+            }
         }
 
         function logout() {
-            auth.signOut().then(() => {
-                window.location.href = "index.html"; // Redirect to login page
+            signOut(auth).then(() => {
+                document.getElementById('login-section').style.display = 'block';
+                document.getElementById('logout-section').style.display = 'none';
             }).catch((error) => {
-                console.error("Error during logout: ", error);
+                console.error("Logout failed:", error);
             });
         }
-
-        // Check authentication state
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                window.location.href = "home.html"; // Redirect to home page if logged in
-            }
-        });
     </script>
 </head>
 <body>
-    <h1>Welcome to Mood Tracking App</h1>
-    <button onclick="login()">Login with Google</button>
+
+    <!-- Login Section -->
+    <div id="login-section">
+        <button id="login-btn" onclick="login()">Login with Google</button>
+    </div>
+
+    <!-- Logout Section -->
+    <div id="logout-section" style="display: none;">
+        <button id="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
 </body>
 </html>
