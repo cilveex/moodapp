@@ -19,7 +19,7 @@ body {
   }
 /* Login Page */
 .login-page {
-    background-image: url('../images/Background.png');
+    background-image: url('../mood_app/Background.png');
 }
 
 .login-box {
@@ -42,7 +42,7 @@ body {
 
 /* Rating Page */
 .rating-page {
-    background-image: url('../images/Background.png');
+    background-image: url('../mood_app/Background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -141,7 +141,7 @@ h1 {
 
 /* Results Page */
 .results-page {
-    background-image: url('../images/Background.png');
+    background-image: url('../mood_app/Background.png');
 }
 
 nav {
