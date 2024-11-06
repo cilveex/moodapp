@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Mood Tracking App</title>
+    <title>myDAY - Login</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div id="login-page" class="page">
-        <button class="login-button" onclick="login()">LOGIN</button>
-    </div>
-    <div id="home-page" class="page" style="display: none;">
-        <h1>Welcome! Moodapp coming soon!</h1>
-        <button class="logout-button" onclick="logout()">LOGOUT</button>
+<body class="login-page">
+
+    <!-- Login Page Content -->
+    <div class="container">
+        <div class="login-box">
+            <h1>my day (in)</h1>
+            <button id="google-signin" class="google-btn" onclick="login()">LOGIN WITH GOOGLE</button>
+        </div>
     </div>
 
+    <!-- Firebase and Google Sign-In Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
@@ -34,25 +36,13 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Define the login function
+        // Login function that redirects to main.html on success
         window.login = function() {
-            console.log("Login button clicked");
             signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Login successful", result);
-                    document.getElementById('login-page').style.display = 'none';
-                    document.getElementById('home-page').style.display = 'flex';
+                .then(() => {
+                    window.location.href = "main.html";
                 })
                 .catch((error) => console.error("Error during login:", error));
-        };
-
-        // Define the logout function
-        window.logout = function() {
-            signOut(auth).then(() => {
-                console.log("Logout successful");
-                document.getElementById('home-page').style.display = 'none';
-                document.getElementById('login-page').style.display = 'flex';
-            }).catch((error) => console.error("Error during logout:", error));
         };
     </script>
 </body>
