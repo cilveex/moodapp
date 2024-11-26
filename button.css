@@ -1,4 +1,8 @@
-
+:root {
+  --color-main: #3498db; /* Blue */
+  --color-main-second: #2ecc71; /* Green */
+  --color-main-third: #e74c3c; /* Red */
+}
  .btn {
 	 display: inline-block;
 	 height: 6rem;
