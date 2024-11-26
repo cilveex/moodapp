@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="button.css">
 </head>
 <body class="rating-page">
-    <img src="../mood_app/Logo.png" alt="Logo" class="corner-logo">
+    <img src="../mood_app/logo.png" alt="Logo" class="corner-logo">
     <nav>
         <span class="username">username</span>
         <div class="wrapper logout-wrapper">
@@ -57,43 +57,43 @@
             </div>
         </div>
     </div>
-    <script src="js/main_logic.js"></script>
+
+    <!-- Firebase Initialization and Logout Script -->
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-        authDomain: "moodappx.firebaseapp.com",
-        projectId: "moodappx",
-        storageBucket: "moodappx.appspot.com",
-        messagingSenderId: "85651101078",
-        appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-        measurementId: "G-6C7E2L6BXH"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+            authDomain: "moodappx.firebaseapp.com",
+            projectId: "moodappx",
+            storageBucket: "moodappx.appspot.com",
+            messagingSenderId: "85651101078",
+            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+            measurementId: "G-6C7E2L6BXH"
+        };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+        // Initialize Firebase (ensure it's done before using any Firebase features)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-    window.logout = function() {
-        const user = auth.currentUser;
-        if (user) {
-            signOut(auth)
-                .then(() => {
-                    console.log("User signed out.");
-                    localStorage.clear(); // Clear cached data
-                    sessionStorage.clear();
-                    window.location.replace("index.html"); // Redirect to login page
-                })
-                .catch((error) => {
-                    console.error("Error during logout:", error);
-                });
-        } else {
-            console.log("No user is signed in.");
-        }
-    };
-</script>
-
+        window.logout = function() {
+            const user = auth.currentUser;
+            if (user) {
+                signOut(auth)
+                    .then(() => {
+                        console.log("User signed out.");
+                        localStorage.clear(); // Clear cached data
+                        sessionStorage.clear();
+                        window.location.replace("index.html"); // Redirect to login page
+                    })
+                    .catch((error) => {
+                        console.error("Error during logout:", error);
+                    });
+            } else {
+                console.log("No user is signed in.");
+            }
+        };
+    </script>
 </body>
 </html>
