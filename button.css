@@ -1,7 +1,7 @@
 :root {
-  --color-main: #3498db; /* Blue */
-  --color-main-second: #2ecc71; /* Green */
-  --color-main-third: #e74c3c; /* Red */
+  --color-main: #a474ff;
+  --color-main-second: #17f1d1;
+  --color-main-third: #FFAB70;
 }
  .btn {
 	 display: inline-block;
