@@ -86,3 +86,17 @@
  .btn__bg__layer-third {
 	 background-color: var(--color-main-third);
 }
+/* Smaller button */
+.btn-small {
+    height: 3rem; /* Half the height */
+    width: 8.25rem; /* Half the width */
+    font-size: 1rem; /* Adjust font size */
+}
+
+/* Adjust parent wrapper for positioning */
+.logout-wrapper {
+    position: absolute;
+    top: 20px; /* Adjust distance from the top */
+    right: 20px; /* Adjust distance from the right */
+    z-index: 100; /* Ensure it stays on top */
+}
