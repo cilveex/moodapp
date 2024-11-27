@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mood rating</title>
+    <title>Mood Rating</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="button.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body class="rating-page">
     <img src="../mood_app/Logo.png" alt="Logo" class="corner-logo">
@@ -33,150 +31,99 @@
             <div class="logo-section">
                 <h1>my day (in)</h1>
                 <div class="logo-wrapper">
-                <span class="bracket">{</span>
-                <img src="mood_app/StartSchool.png" alt="Logo" class="logo">
-                <span class="bracket">}</span>
-            </div>
+                    <span class="bracket">{</span>
+                    <img src="mood_app/StartSchool.png" alt="Logo" class="logo">
+                    <span class="bracket">}</span>
+                </div>
             </div>
 
-           <div class="mood-container">
-    <div class="mood-option" data-value="4">
-        <img src="mood_app/excellent.png" alt="Excellent">
-    </div>
-    <div class="mood-option" data-value="3">
-        <img src="mood_app/good.png" alt="Good">
-    </div>
-    <div class="mood-option" data-value="2">
-        <img src="mood_app/okay.png" alt="Okay">
-    </div>
-    <div class="mood-option" data-value="1">
-        <img src="mood_app/bad.png" alt="Bad">
-    </div>
-</div>
+            <div class="mood-container">
+                <div class="mood-option" data-value="4">
+                    <img src="mood_app/excellent.png" alt="Excellent">
+                </div>
+                <div class="mood-option" data-value="3">
+                    <img src="mood_app/good.png" alt="Good">
+                </div>
+                <div class="mood-option" data-value="2">
+                    <img src="mood_app/okay.png" alt="Okay">
+                </div>
+                <div class="mood-option" data-value="1">
+                    <img src="mood_app/bad.png" alt="Bad">
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase Initialization and Logout Script -->
-   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-        authDomain: "moodappx.firebaseapp.com",
-        projectId: "moodappx",
-        storageBucket: "moodappx.appspot.com",
-        messagingSenderId: "85651101078",
-        appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-        measurementId: "G-6C7E2L6BXH"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+            authDomain: "moodappx.firebaseapp.com",
+            projectId: "moodappx",
+            storageBucket: "moodappx.appspot.com",
+            messagingSenderId: "85651101078",
+            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+            measurementId: "G-6C7E2L6BXH"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    // Check authentication status
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log("User is authenticated:", user.email);
+        // Check authentication status
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User is authenticated:", user.email);
 
-            // Enable voting functionality
-            enableVoting();
-        } else {
-            console.log("User is not authenticated.");
-            window.location.replace("index.html"); // Redirect to login page
-        }
-    });
-
-    // Logout functionality
-    window.logout = function () {
-        signOut(auth)
-            .then(() => {
-                console.log("User signed out.");
-                window.location.replace("index.html");
-            })
-            .catch((error) => console.error("Error during logout:", error));
-    };
-
-    // Voting functionality
-    function enableVoting() {
-    const moodOptions = document.querySelectorAll(".mood-option");
-
-    moodOptions.forEach(option => {
-        option.addEventListener("click", async () => {
-            const value = option.dataset.value;
-
-            // Store the vote in Firestore
-            const docRef = doc(db, "votes", "ratings");
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                // Update existing data
-                const data = docSnap.data();
-                data[value] = (data[value] || 0) + 1;
-                await updateDoc(docRef, data);
+                // Enable voting functionality
+                enableVoting();
             } else {
-                // Create new data
-                const data = { [value]: 1 };
-                await setDoc(docRef, data);
+                console.log("User is not authenticated.");
+                window.location.replace("index.html"); // Redirect to login page
             }
-
-            // Redirect to chart page
-            window.location.replace("chart.html");
         });
-    });
-}
 
+        // Logout functionality
+        window.logout = function () {
+            signOut(auth)
+                .then(() => {
+                    console.log("User signed out.");
+                    window.location.replace("index.html");
+                })
+                .catch((error) => console.error("Error during logout:", error));
+        };
 
-    // Function to display the chart
-    async function displayChart() {
-        const docRef = doc(db, "votes", "ratings");
-        const docSnap = await getDoc(docRef);
+        // Voting functionality
+        function enableVoting() {
+            const moodOptions = document.querySelectorAll(".mood-option");
 
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            const labels = ["Excellent", "Good", "Okay", "Bad"];
-            const values = [data["4"] || 0, data["3"] || 0, data["2"] || 0, data["1"] || 0];
+            moodOptions.forEach(option => {
+                option.addEventListener("click", async () => {
+                    const value = option.dataset.value;
 
-            // Render the chart
-            const chartContainer = document.getElementById("chart-container");
-            if (!chartContainer) {
-                const newChartContainer = document.createElement("div");
-                newChartContainer.id = "chart-container";
-                document.body.appendChild(newChartContainer);
+                    // Store the vote in Firestore
+                    const docRef = doc(db, "votes", "ratings");
+                    const docSnap = await getDoc(docRef);
 
-                const chartCanvas = document.createElement("canvas");
-                chartCanvas.id = "ratingChart";
-                newChartContainer.appendChild(chartCanvas);
-
-                const ctx = chartCanvas.getContext("2d");
-                new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "Ratings",
-                            data: values,
-                            backgroundColor: ["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"],
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
+                    if (docSnap.exists()) {
+                        // Update existing data
+                        const data = docSnap.data();
+                        data[value] = (data[value] || 0) + 1;
+                        await updateDoc(docRef, data);
+                    } else {
+                        // Create new data
+                        const data = { [value]: 1 };
+                        await setDoc(docRef, data);
                     }
+
+                    // Redirect to chart page
+                    window.location.replace("chart.html");
                 });
-            }
-        } else {
-            console.error("No rating data found.");
+            });
         }
-    }
-</script>
-
-
+    </script>
 </body>
 </html>
