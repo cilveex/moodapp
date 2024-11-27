@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="button.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body class="rating-page">
     <img src="../mood_app/logo.png" alt="Logo" class="corner-logo">
@@ -37,63 +39,138 @@
             </div>
             </div>
 
-            <div class="mood-container">
-                <div class="mood-option" data-value="4">
-                    <img src="mood_app/excellent.png" alt="Excellent">
-                    
-                </div>
-                <div class="mood-option" data-value="3">
-                    <img src="mood_app/good.png" alt="Good">
-                    
-                </div>
-                <div class="mood-option" data-value="2">
-                    <img src="mood_app/okay.png" alt="Okay">
-                    
-                </div>
-                <div class="mood-option" data-value="1">
-                    <img src="mood_app/bad.png" alt="Bad">
-                    
-                </div>
-            </div>
+           <div class="mood-container">
+    <div class="mood-option" data-value="4">
+        <img src="mood_app/excellent.png" alt="Excellent">
+    </div>
+    <div class="mood-option" data-value="3">
+        <img src="mood_app/good.png" alt="Good">
+    </div>
+    <div class="mood-option" data-value="2">
+        <img src="mood_app/okay.png" alt="Okay">
+    </div>
+    <div class="mood-option" data-value="1">
+        <img src="mood_app/bad.png" alt="Bad">
+    </div>
+</div>
         </div>
     </div>
 
     <!-- Firebase Initialization and Logout Script -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-            authDomain: "moodappx.firebaseapp.com",
-            projectId: "moodappx",
-            storageBucket: "moodappx.appspot.com",
-            messagingSenderId: "85651101078",
-            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-            measurementId: "G-6C7E2L6BXH"
-        };
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+        authDomain: "moodappx.firebaseapp.com",
+        projectId: "moodappx",
+        storageBucket: "moodappx.appspot.com",
+        messagingSenderId: "85651101078",
+        appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+        measurementId: "G-6C7E2L6BXH"
+    };
 
-        // Initialize Firebase (ensure it's done before using any Firebase features)
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        window.logout = function() {
-            const user = auth.currentUser;
-            if (user) {
-                signOut(auth)
-                    .then(() => {
-                        console.log("User signed out.");
-                        localStorage.clear(); // Clear cached data
-                        sessionStorage.clear();
-                        window.location.replace("index.html"); // Redirect to login page
-                    })
-                    .catch((error) => {
-                        console.error("Error during logout:", error);
-                    });
+    // Logout functionality
+    window.logout = function() {
+        const user = auth.currentUser;
+        if (user) {
+            signOut(auth)
+                .then(() => {
+                    console.log("User signed out.");
+                    localStorage.clear(); // Clear cached data
+                    sessionStorage.clear();
+                    window.location.replace("index.html"); // Redirect to login page
+                })
+                .catch((error) => {
+                    console.error("Error during logout:", error);
+                });
+        } else {
+            console.log("No user is signed in.");
+        }
+    };
+
+    // Voting functionality
+    const moodOptions = document.querySelectorAll(".mood-option");
+
+    moodOptions.forEach(option => {
+        option.addEventListener("click", async () => {
+            const value = option.dataset.value;
+
+            // Store the vote in Firestore
+            const docRef = doc(db, "votes", "ratings");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                // Update existing data
+                const data = docSnap.data();
+                data[value] = (data[value] || 0) + 1;
+                await updateDoc(docRef, data);
             } else {
-                console.log("No user is signed in.");
+                // Create new data
+                const data = { [value]: 1 };
+                await setDoc(docRef, data);
             }
-        };
-    </script>
+
+            // Display the chart
+            displayChart();
+        });
+    });
+
+    // Function to display the chart
+    async function displayChart() {
+        const docRef = doc(db, "votes", "ratings");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const labels = ["Excellent", "Good", "Okay", "Bad"];
+            const values = [data["4"] || 0, data["3"] || 0, data["2"] || 0, data["1"] || 0];
+
+            // Render the chart
+            const chartContainer = document.getElementById("chart-container");
+            if (!chartContainer) {
+                const newChartContainer = document.createElement("div");
+                newChartContainer.id = "chart-container";
+                document.body.appendChild(newChartContainer);
+
+                const chartCanvas = document.createElement("canvas");
+                chartCanvas.id = "ratingChart";
+                newChartContainer.appendChild(chartCanvas);
+
+                const ctx = chartCanvas.getContext("2d");
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Ratings",
+                            data: values,
+                            backgroundColor: ["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        } else {
+            console.error("No rating data found.");
+        }
+    }
+</script>
+
 </body>
 </html>
