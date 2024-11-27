@@ -101,32 +101,33 @@
 
     // Voting functionality
     function enableVoting() {
-        const moodOptions = document.querySelectorAll(".mood-option");
+    const moodOptions = document.querySelectorAll(".mood-option");
 
-        moodOptions.forEach(option => {
-            option.addEventListener("click", async () => {
-                const value = option.dataset.value;
+    moodOptions.forEach(option => {
+        option.addEventListener("click", async () => {
+            const value = option.dataset.value;
 
-                // Store the vote in Firestore
-                const docRef = doc(db, "votes", "ratings");
-                const docSnap = await getDoc(docRef);
+            // Store the vote in Firestore
+            const docRef = doc(db, "votes", "ratings");
+            const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    // Update existing data
-                    const data = docSnap.data();
-                    data[value] = (data[value] || 0) + 1;
-                    await updateDoc(docRef, data);
-                } else {
-                    // Create new data
-                    const data = { [value]: 1 };
-                    await setDoc(docRef, data);
-                }
+            if (docSnap.exists()) {
+                // Update existing data
+                const data = docSnap.data();
+                data[value] = (data[value] || 0) + 1;
+                await updateDoc(docRef, data);
+            } else {
+                // Create new data
+                const data = { [value]: 1 };
+                await setDoc(docRef, data);
+            }
 
-                // Display the chart
-                displayChart();
-            });
+            // Redirect to chart page
+            window.location.replace("chart.html");
         });
-    }
+    });
+}
+
 
     // Function to display the chart
     async function displayChart() {
