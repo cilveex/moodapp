@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="button.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="rating-page">
+    <img src="../mood_app/Logo.png" alt="Logo" class="corner-logo">
+    <nav>
+        <span class="username">username</span>
+        <div class="wrapper logout-wrapper">
+            <button class="btn btn-small" onclick="logout()">
+                <div class="btn__bg">
+                    <span class="btn__bg__layer btn__bg__layer-first"></span>
+                    <span class="btn__bg__layer btn__bg__layer-second"></span>
+                    <span class="btn__bg__layer btn__bg__layer-third"></span>
+                </div>
+                <span class="btn__text-out">LOGOUT</span>
+                <span class="btn__text-in">LOGOUT</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content-wrapper" style="text-align: center;">
+            <h1>Ratings Chart</h1>
+            <div id="chart-container">
+                <canvas id="ratingChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
+            authDomain: "moodappx.firebaseapp.com",
+            projectId: "moodappx",
+            storageBucket: "moodappx.appspot.com",
+            messagingSenderId: "85651101078",
+            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
+            measurementId: "G-6C7E2L6BXH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Logout functionality
+        window.logout = function () {
+            signOut(auth)
+                .then(() => {
+                    console.log("User signed out.");
+                    window.location.replace("index.html");
+                })
+                .catch((error) => console.error("Error during logout:", error));
+        };
+
+        // Display the chart
+        async function displayChart() {
+            const docRef = doc(db, "votes", "ratings");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const labels = ["Excellent", "Good", "Okay", "Bad"];
+                const values = [data["4"] || 0, data["3"] || 0, data["2"] || 0, data["1"] || 0];
+
+                const ctx = document.getElementById("ratingChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Ratings",
+                            data: values,
+                            backgroundColor: ["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error("No rating data found.");
+            }
+        }
+
+        // Load the chart on page load
+        displayChart();
+    </script>
+</body>
+</html>
