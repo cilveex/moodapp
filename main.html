@@ -13,7 +13,7 @@
 
 </head>
 <body class="rating-page">
-    <img src="../mood_app/logo.png" alt="Logo" class="corner-logo">
+    <img src="../mood_app/Logo.png" alt="Logo" class="corner-logo">
     <nav>
         <span class="username">username</span>
         <div class="wrapper logout-wrapper">
@@ -57,12 +57,11 @@
     </div>
 
     <!-- Firebase Initialization and Logout Script -->
-    <script type="module">
+   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
         authDomain: "moodappx.firebaseapp.com",
@@ -73,56 +72,61 @@
         measurementId: "G-6C7E2L6BXH"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Logout functionality
-    window.logout = function() {
-        const user = auth.currentUser;
+    // Check authentication status
+    auth.onAuthStateChanged((user) => {
         if (user) {
-            signOut(auth)
-                .then(() => {
-                    console.log("User signed out.");
-                    localStorage.clear(); // Clear cached data
-                    sessionStorage.clear();
-                    window.location.replace("index.html"); // Redirect to login page
-                })
-                .catch((error) => {
-                    console.error("Error during logout:", error);
-                });
+            console.log("User is authenticated:", user.email);
+
+            // Enable voting functionality
+            enableVoting();
         } else {
-            console.log("No user is signed in.");
+            console.log("User is not authenticated.");
+            window.location.replace("index.html"); // Redirect to login page
         }
+    });
+
+    // Logout functionality
+    window.logout = function () {
+        signOut(auth)
+            .then(() => {
+                console.log("User signed out.");
+                window.location.replace("index.html");
+            })
+            .catch((error) => console.error("Error during logout:", error));
     };
 
     // Voting functionality
-    const moodOptions = document.querySelectorAll(".mood-option");
+    function enableVoting() {
+        const moodOptions = document.querySelectorAll(".mood-option");
 
-    moodOptions.forEach(option => {
-        option.addEventListener("click", async () => {
-            const value = option.dataset.value;
+        moodOptions.forEach(option => {
+            option.addEventListener("click", async () => {
+                const value = option.dataset.value;
 
-            // Store the vote in Firestore
-            const docRef = doc(db, "votes", "ratings");
-            const docSnap = await getDoc(docRef);
+                // Store the vote in Firestore
+                const docRef = doc(db, "votes", "ratings");
+                const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                // Update existing data
-                const data = docSnap.data();
-                data[value] = (data[value] || 0) + 1;
-                await updateDoc(docRef, data);
-            } else {
-                // Create new data
-                const data = { [value]: 1 };
-                await setDoc(docRef, data);
-            }
+                if (docSnap.exists()) {
+                    // Update existing data
+                    const data = docSnap.data();
+                    data[value] = (data[value] || 0) + 1;
+                    await updateDoc(docRef, data);
+                } else {
+                    // Create new data
+                    const data = { [value]: 1 };
+                    await setDoc(docRef, data);
+                }
 
-            // Display the chart
-            displayChart();
+                // Display the chart
+                displayChart();
+            });
         });
-    });
+    }
 
     // Function to display the chart
     async function displayChart() {
@@ -171,6 +175,7 @@
         }
     }
 </script>
+
 
 </body>
 </html>
