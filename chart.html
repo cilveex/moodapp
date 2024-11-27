@@ -70,38 +70,38 @@
 
         // Display the chart
         async function displayChart() {
-            const docRef = doc(db, "votes", "ratings");
-            const docSnap = await getDoc(docRef);
+    const docRef = doc(db, "votes", "ratings");
+    const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const labels = ["Excellent", "Good", "Okay", "Bad"];
-                const values = [data["4"] || 0, data["3"] || 0, data["2"] || 0, data["1"] || 0];
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        const labels = ["Bad", "Okay", "Good", "Excellent"]; // Correct order
+        const values = [data["1"] || 0, data["2"] || 0, data["3"] || 0, data["4"] || 0]; // Correct order
 
-                const ctx = document.getElementById("ratingChart").getContext("2d");
-                new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "Ratings",
-                            data: values,
-                            backgroundColor: ["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"],
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
+        const ctx = document.getElementById("ratingChart").getContext("2d");
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Ratings",
+                    data: values,
+                    backgroundColor: ["#e74c3c", "#f1c40f", "#3498db", "#2ecc71"], // Colors for each label
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
                     }
-                });
-            } else {
-                console.error("No rating data found.");
+                }
             }
-        }
+        });
+    } else {
+        console.error("No rating data found.");
+    }
+}
 
         // Load the chart on page load
         displayChart();
