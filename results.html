@@ -15,24 +15,25 @@
         </div>
         <button class="logout-button" onclick="logout()">LOGOUT</button>
     </div>
-
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-            authDomain: "moodappx.firebaseapp.com",
-            projectId: "moodappx",
-            storageBucket: "moodappx.appspot.com",
-            messagingSenderId: "85651101078",
-            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-            measurementId: "G-6C7E2L6BXH"
-        };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        document.addEventListener("DOMContentLoaded", async () => {
+            const auth0Client = await auth0.createAuth0Client({
+                domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
+                clientId: "SEQvb4OwJaZKGttRAFIotZUmezz9BPmJ",
+                authorizationParams: {
+                    redirect_uri: "https://moodapp-five.vercel.app/main.html"
+                }
+            });
+
+            const isAuthenticated = await auth0Client.isAuthenticated();
+            if (!isAuthenticated) {
+                await auth0Client.loginWithRedirect();
+            }
+        });
+
 
         // Define the logout function
         window.logout = function() {
