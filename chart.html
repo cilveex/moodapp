@@ -16,15 +16,7 @@
     <nav>
         <span class="username">username</span>
         <div class="wrapper logout-wrapper">
-            <button class="btn btn-small" onclick="logout()">
-                <div class="btn__bg">
-                    <span class="btn__bg__layer btn__bg__layer-first"></span>
-                    <span class="btn__bg__layer btn__bg__layer-second"></span>
-                    <span class="btn__bg__layer btn__bg__layer-third"></span>
-                </div>
-                <span class="btn__text-out">LOGOUT</span>
-                <span class="btn__text-in">LOGOUT</span>
-            </button>
+            <button class="btn btn-small" onclick="logout()">LOGOUT</button>
         </div>
     </nav>
 
@@ -36,10 +28,8 @@
             </div>
         </div>
     </div>
-<script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script type="module">
-
-
         document.addEventListener("DOMContentLoaded", async () => {
             const auth0Client = await auth0.createAuth0Client({
                 domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
@@ -55,43 +45,41 @@
             }
         });
 
+        // Auth0 Logout function
+        window.logout = async function() {
+            const auth0Client = await auth0.createAuth0Client({
+                domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
+                clientId: "SEQvb4OwJaZKGttRAFIotZUmezz9BPmJ",
+            });
+            await auth0Client.logout({
+                logoutParams: { returnTo: "https://moodapp-five.vercel.app" }
+            });
+        };
 
-        // Display the chart
+        // Fetch and Display Chart Data (replace with real API)
         async function displayChart() {
-    const docRef = doc(db, "votes", "ratings");
-    const docSnap = await getDoc(docRef);
+            const response = await fetch("https://moodapp-five.vercel.app/api/mood-ratings"); 
+            const data = await response.json();
+            const labels = ["Bad", "Okay", "Good", "Excellent"];
+            const values = [data["1"] || 0, data["2"] || 0, data["3"] || 0, data["4"] || 0];
 
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        const labels = ["Bad", "Okay", "Good", "Excellent"]; // Correct order
-        const values = [data["1"] || 0, data["2"] || 0, data["3"] || 0, data["4"] || 0]; // Correct order
-
-        const ctx = document.getElementById("ratingChart").getContext("2d");
-        new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Ratings",
-                    data: values,
-                    backgroundColor: ["#e74c3c", "#f1c40f", "#3498db", "#2ecc71"], // Colors for each label
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+            const ctx = document.getElementById("ratingChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Ratings",
+                        data: values,
+                        backgroundColor: ["#e74c3c", "#f1c40f", "#3498db", "#2ecc71"],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
                 }
-            }
-        });
-    } else {
-        console.error("No rating data found.");
-    }
-}
-
-        // Load the chart on page load
+            });
+        }
         displayChart();
     </script>
 </body>
