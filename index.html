@@ -33,7 +33,7 @@
                 domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
                 clientId: "SEQvb4OwJaZKGttRAFIotZUmezz9BPmJ",
                 authorizationParams: {
-                    redirect_uri: "http://moodapp-five.vercel.app/main.html" // Ensure this matches your Auth0 allowed callback URLs
+                    redirect_uri: "https://moodapp-five.vercel.app/main.html"
                 }
             });
 
@@ -43,7 +43,7 @@
 
             document.getElementById("logout-btn").addEventListener("click", async () => {
                 await auth0Client.logout({
-                    logoutParams: { returnTo: window.location.origin }
+                    logoutParams: { returnTo: "https://moodapp-five.vercel.app" }
                 });
             });
 
