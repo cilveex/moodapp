@@ -6,14 +6,13 @@
     <title>myDAY - Login</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="button.css">
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 </head>
 <body class="login-page">
-
-    <!-- Login Page Content -->
     <div class="container">
         <div class="login-box">
             <div class="wrapper">
-                <button class="btn" onclick="login()">
+                <button class="btn" id="login-btn">
                     <div class="btn__bg">
                         <span class="btn__bg__layer btn__bg__layer-first"></span>
                         <span class="btn__bg__layer btn__bg__layer-second"></span>
@@ -22,38 +21,47 @@
                     <span class="btn__text-out">LOGIN WITH GOOGLE</span>
                     <span class="btn__text-in">LOGIN WITH GOOGLE</span>
                 </button>
+                <button class="btn" id="logout-btn" style="display: none;">Logout</button>
             </div>
+            <p id="status"></p>
         </div>
     </div>
 
-    <!-- Firebase and Google Sign-In Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const auth0Client = await auth0.createAuth0Client({
+                domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
+                clientId: "SEQvb4OwJaZKGttRAFIotZUmezz9BPmJ",
+                authorizationParams: {
+                    redirect_uri: window.location.origin + "/main.html"
+                }
+            });
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDm79gYzi5vLhCnTxX02B5Bx7vZfxgP8W8",
-            authDomain: "moodappx.firebaseapp.com",
-            projectId: "moodappx",
-            storageBucket: "moodappx.appspot.com",
-            messagingSenderId: "85651101078",
-            appId: "1:85651101078:web:ddb48ae67f98aa511e79b7",
-            measurementId: "G-6C7E2L6BXH"
-        };
+            document.getElementById("login-btn").addEventListener("click", async () => {
+                await auth0Client.loginWithRedirect();
+            });
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+            document.getElementById("logout-btn").addEventListener("click", async () => {
+                await auth0Client.logout({
+                    logoutParams: { returnTo: window.location.origin }
+                });
+            });
 
-        // Login function that redirects to main.html on success
-        window.login = function() {
-            signInWithPopup(auth, provider)
-                .then(() => {
-                    window.location.href = "main.html";
-                })
-                .catch((error) => console.error("Error during login:", error));
-        };
+            if (window.location.search.includes("code=")) {
+                await auth0Client.handleRedirectCallback();
+                window.history.replaceState({}, document.title, "/");
+            }
+
+            const isAuthenticated = await auth0Client.isAuthenticated();
+            if (isAuthenticated) {
+                const user = await auth0Client.getUser();
+                document.getElementById("status").innerText = `Logged in as ${user.name}`;
+                document.getElementById("login-btn").style.display = "none";
+                document.getElementById("logout-btn").style.display = "block";
+            } else {
+                document.getElementById("status").innerText = "Not logged in";
+            }
+        });
     </script>
 </body>
 </html>
