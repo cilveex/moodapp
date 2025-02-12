@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
         <h1>Your Mood Stats</h1>
         <div id="stats-graph">
@@ -17,8 +16,6 @@
     </div>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script type="module">
-
-
         document.addEventListener("DOMContentLoaded", async () => {
             const auth0Client = await auth0.createAuth0Client({
                 domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
@@ -34,13 +31,15 @@
             }
         });
 
-
-        // Define the logout function
-        window.logout = function() {
-            signOut(auth).then(() => {
-                // Redirect back to the login page
-                window.location.href = "index.html";
-            }).catch((error) => console.error("Error during logout:", error));
+        // Auth0 Logout function
+        window.logout = async function() {
+            const auth0Client = await auth0.createAuth0Client({
+                domain: "dev-stq8yfrs282dqfe0.eu.auth0.com",
+                clientId: "SEQvb4OwJaZKGttRAFIotZUmezz9BPmJ",
+            });
+            await auth0Client.logout({
+                logoutParams: { returnTo: "https://moodapp-five.vercel.app" }
+            });
         };
     </script>
 </body>
